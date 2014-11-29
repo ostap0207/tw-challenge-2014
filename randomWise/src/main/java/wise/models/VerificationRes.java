@@ -2,7 +2,6 @@ package wise.models;
 
 import javax.persistence.Entity;
 
-@Entity
 public class VerificationRes {
 	String key;
 

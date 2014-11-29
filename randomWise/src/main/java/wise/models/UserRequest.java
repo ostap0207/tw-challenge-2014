@@ -2,8 +2,9 @@ package wise.models;
 
 import javax.persistence.Entity;
 
-@Entity
 public class UserRequest {
+	String number;
+	String key;
 	public String getNumber() {
 		return number;
 	}
@@ -16,6 +17,4 @@ public class UserRequest {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	String number;
-	String key;
 }
