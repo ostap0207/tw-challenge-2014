@@ -1,4 +1,4 @@
-package wise.models;
+package wise.requests;
 
 public class VerificationReq {
 	String number;
