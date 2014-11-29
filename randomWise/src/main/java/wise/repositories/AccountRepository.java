@@ -12,6 +12,6 @@ import wise.models.*;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long>{
 	
-	@Query("SELECT a FROM Account a WHERE a.phone = :phone")
+	@Query("SELECT a FROM Account a WHERE a.phone=:phone")
 	public Account findByPhone(@Param("phone") String phone);
 }

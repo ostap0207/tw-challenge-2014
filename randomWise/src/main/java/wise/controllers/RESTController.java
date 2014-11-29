@@ -12,13 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import wise.models.Account;
 import wise.repositories.AccountRepository;
-import wise.requests.AccountReq;
-import wise.requests.NumbersReq;
-import wise.requests.PinRequest;
-import wise.requests.UserRequest;
-import wise.requests.VerificationReq;
-import wise.responses.NumbersRes;
-import wise.responses.VerificationRes;
+import wise.requests.*;
+import wise.responses.*;
 
 @RestController
 public class RESTController {
@@ -32,7 +27,8 @@ public class RESTController {
 		UUID id = UUID.randomUUID();
 		Account account = new Account();
 		account.setPhone(request.getNumber());
-		account.setVeryficationCode(id.toString());
+		account.setKey(id.toString());
+		account.setVeryfied(true);
 		VerificationRes vr = new VerificationRes();
 		vr.setKey(id.toString());
 		accountRepo.saveAndFlush(account);
@@ -40,21 +36,35 @@ public class RESTController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/pin")
-	public void setPin(@RequestBody PinRequest request) {
-		Account account = accountRepo.findByPhone(request.getNumber());
-		if (account.getKey().equals(request.getKey()))
-			account.setPIN(request.getPIN());
-		accountRepo.saveAndFlush(account);
+	public ResponseEntity<TransferRes> setPin(@RequestBody PinRequest request) {
+		TransferRes result = new TransferRes();
+		result.setSucceded(false);
+		try {
+			Account account = accountRepo.findByPhone(request.getNumber());
+			if (account.getKey().equals(request.getKey()))
+				account.setPIN(request.getPIN());
+			accountRepo.saveAndFlush(account);
+			result.setSucceded(true);
+		} catch (Exception ex) {
+		}
+		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/account")
-	public void setAccountData(@RequestBody AccountReq request) {
-		Account account = accountRepo.findByPhone(request.getNumber());
-		if (account.getKey().equals(request.getKey())) {
-			account.setAccount(request.getAccount());
-			account.setName(request.getName());
+	public ResponseEntity<TransferRes> setAccountData(
+			@RequestBody AccountReq request) {
+		TransferRes result = new TransferRes();
+		result.setSucceded(false);
+		try {
+			Account account = accountRepo.findByPhone(request.getNumber());
+			if (account.getKey().equals(request.getKey())) {
+				account.setAccount(request.getAccount());
+				account.setName(request.getName());
+			}
+			accountRepo.saveAndFlush(account);
+		} catch (Exception ex) {
 		}
-		accountRepo.saveAndFlush(account);
+		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/numbers")
@@ -66,11 +76,27 @@ public class RESTController {
 			try {
 				existingNumbers.add(acc.getPhone());
 			} catch (Exception ex) {
-
 			}
 		}
 		NumbersRes result = new NumbersRes();
 		result.setNumbers(existingNumbers);
 		return new ResponseEntity<NumbersRes>(result, HttpStatus.OK);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/transfer")
+	public ResponseEntity<TransferRes> makeTransfer(
+			@RequestBody TransferReq request) {
+		TransferRes result = new TransferRes();
+		result.setSucceded(false);
+		Account acc = accountRepo.findByPhone(request.getNumber());
+		try {
+			if (request.getKey().equals(acc.getKey())
+					&& request.getPin().equals(acc.getPIN())
+					&& acc.isVeryfied()) {
+				result.setSucceded(true);
+			}
+		} catch (Exception ex) {
+		}
+		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
 	}
 }
