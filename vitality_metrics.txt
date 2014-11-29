@@ -1,0 +1,17 @@
+Metrics
+What are you tracking to measure the vitality of your MVP?
+Our solution is a mobile application. The metrics that we intend to calculate are as follows:
+1.	Quantity of application downloads from App store.
+-	The application will help us gather information about how many users download the application to process their regular transactions.
+2.	Number transactions done through the application.
+-	We intend to measure the number of complete transactions made by the users of the application. 
+3.	Viral spread of the application.
+-	We intend to measure the rate of download of the application over a specific period of time e.g. a month. This is also a measure the rate and how many new or existing users are reached by other users when using the application
+4.	How far the users navigate inside application.
+-	We intend to measure how far the user navigates into the application so that we can determine the points where the users abandon the application.
+5.	How long a user spends on specific screens
+-	We intend to measure how long it takes users to input information, or decide to proceed to the next screen. This also allows us to determine how useable the application is for the users.
+6.	Measure how many times the application is used by the user specific units of time
+-	We intend to measure the number of times users may use the application in comparison to other transaction mediums to best decide how comfortable the users get with the application.
+7.	The average time taken by users to complete a transaction.
+-	We intend to measure in average how long it takes for many users to complete the transaction using the application.
