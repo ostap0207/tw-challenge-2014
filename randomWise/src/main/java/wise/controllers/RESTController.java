@@ -9,12 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import wise.models.Account;
-import wise.models.VerificationRes;
 import wise.repositories.AccountRepository;
 import wise.requests.AccountReq;
 import wise.requests.PinRequest;
 import wise.requests.UserRequest;
 import wise.requests.VerificationReq;
+import wise.responses.VerificationRes;
 
 @RestController
 public class RESTController {

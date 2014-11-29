@@ -1,4 +1,4 @@
-package wise.models;
+package wise.responses;
 
 import javax.persistence.Entity;
 
