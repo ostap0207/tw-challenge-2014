@@ -20,10 +20,11 @@ public class RESTController {
 
 	@Autowired
 	AccountRepository accountRepo;
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/all")
-	public ResponseEntity<List<Account>> getAll(){
-		return new ResponseEntity<List<Account>>(accountRepo.findAll(), HttpStatus.OK);
+	public ResponseEntity<List<Account>> getAll() {
+		return new ResponseEntity<List<Account>>(accountRepo.findAll(),
+				HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/verification")
@@ -31,6 +32,12 @@ public class RESTController {
 			@RequestBody VerificationReq request) {
 		UUID id = UUID.randomUUID();
 		Account account = new Account();
+		try {
+			account = accountRepo.findByPhone(request.getNumber());
+			account.getKey();
+		} catch (Exception ex) {
+			account = new Account();
+		}
 		account.setPhone(request.getNumber());
 		account.setKey(id.toString());
 		account.setVeryfied(true);
@@ -75,6 +82,8 @@ public class RESTController {
 	@RequestMapping(method = RequestMethod.POST, value = "/numbers")
 	public ResponseEntity<NumbersRes> getNumbers(@RequestBody NumbersReq request) {
 		List<String> existingNumbers = new ArrayList<String>();
+		Account user = accountRepo.findByPhone(request.getNumber());
+		if (user.getKey().equals(request.getKey())) {
 		List<String> requestedNumbers = request.getNumbers();
 		for (String phone : requestedNumbers) {
 			Account acc = accountRepo.findByPhone(phone);
@@ -86,6 +95,11 @@ public class RESTController {
 		NumbersRes result = new NumbersRes();
 		result.setNumbers(existingNumbers);
 		return new ResponseEntity<NumbersRes>(result, HttpStatus.OK);
+		}
+		else {
+			NumbersRes result = new NumbersRes();
+			return new ResponseEntity<NumbersRes>(result, HttpStatus.OK);
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/transfer")
