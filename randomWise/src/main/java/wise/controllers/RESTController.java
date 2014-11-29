@@ -11,7 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import wise.models.Account;
+import wise.models.Notification;
+import wise.models.Transaction;
 import wise.repositories.AccountRepository;
+import wise.repositories.NotificationRepository;
 import wise.requests.*;
 import wise.responses.*;
 
@@ -20,6 +23,8 @@ public class RESTController {
 
 	@Autowired
 	AccountRepository accountRepo;
+	@Autowired
+	NotificationRepository notificationRepo;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/all")
 	public ResponseEntity<List<Account>> getAll() {
@@ -74,6 +79,7 @@ public class RESTController {
 				account.setName(request.getName());
 			}
 			accountRepo.saveAndFlush(account);
+			result.setSucceded(true);
 		} catch (Exception ex) {
 		}
 		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
@@ -116,6 +122,58 @@ public class RESTController {
 			}
 		} catch (Exception ex) {
 		}
+		if (result.isSucceded()){
+			Notification notification = new Notification();
+			notification.setCurrency(request.getCurrency());
+			notification.setSum(request.getAmount());
+			notification.setSender(request.getNumber());
+			notification.setReceiver(request.getReseiverNumber());
+			notification.setName(acc.getName());
+			notificationRepo.saveAndFlush(notification);
+		}
 		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/notifications")
+	public ResponseEntity<NotificationRes> getNotifications(@RequestBody NotificationReq request){
+		Account user = accountRepo.findByPhone(request.getNumber());
+		try{
+			if (user.getKey().equals(request.getKey())){
+				List<Notification> result = notificationRepo.findByPhone(request.getReceiver());
+				NotificationRes res = new NotificationRes();
+				res.setNotifications(result);
+				return new ResponseEntity<NotificationRes>(res, HttpStatus.OK);
+			}
+		}catch (Exception ex){
+			
+		}
+		return new ResponseEntity<NotificationRes>(new NotificationRes(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/accept")
+	public ResponseEntity<TransferRes> acceptTransfer(@RequestBody AcceptNotReq request){
+		Account user = accountRepo.findByPhone(request.getNumber());
+		TransferRes result = new TransferRes();
+		result.setSucceded(false);
+		try{
+			if (user.getKey().equals(request.getKey())){
+				Notification notification = notificationRepo.findOne(request.getNotificationId());
+				notification.setAccepted(true);
+				querryTransferWise(notification);
+				result.setSucceded(true);
+				return new ResponseEntity<TransferRes>(result, HttpStatus.OK); 
+			}
+		}catch (Exception ex){
+			
+		}
+		return new ResponseEntity<TransferRes>(result, HttpStatus.OK);
+	}
+	
+	private void querryTransferWise(Notification notification){
+		String senderName = notification.getName();
+		String receiverName = accountRepo.findByPhone(notification.getReceiver()).getName();
+		String senderAcc = accountRepo.findByPhone(notification.getSender()).getAccount();
+		String receiverAcc = accountRepo.findByPhone(notification.getReceiver()).getAccount();
+		Transaction transaction = new Transaction(senderName, senderAcc, receiverName, receiverAcc, notification.getSum(), notification.getCurrency());
 	}
 }
