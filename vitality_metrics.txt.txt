@@ -1,0 +1,9 @@
+As our solution is mobile application, it is easy to measure the vitality. We can count next parameters:
+
+1.We could measure quantity of downloads of this app from App Market.
+2.Easy to count how many transactions were done through application. 
+3.Measure network effect. E.g. how fast people started using the application.
+4.Measure how far user navigate inside application.
+5.Average transaction per user.
+6.Measure transactions from app to app and transactions from app to non-users of application
+7.How much time is spent by user to complete a transaction.

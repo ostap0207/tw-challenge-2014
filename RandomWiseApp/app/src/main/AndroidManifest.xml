@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="randomwise.com.randomwise.VerificationActivity"
+            android:label="@string/title_activity_verification" >
+        </activity>
+        <activity
+            android:name="randomwise.com.randomwise.SetupPinActivity"
+            android:label="@string/title_activity_setup_pin" >
+        </activity>
     </application>
 
 </manifest>
