@@ -20,6 +20,11 @@ public class RESTController {
 
 	@Autowired
 	AccountRepository accountRepo;
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/all")
+	public ResponseEntity<List<Account>> getAll(){
+		return new ResponseEntity<List<Account>>(accountRepo.findAll(), HttpStatus.OK);
+	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/verification")
 	public ResponseEntity<VerificationRes> verificationRequest(
